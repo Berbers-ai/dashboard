@@ -10,6 +10,13 @@ type WeatherData = {
   time?: string | null;
 };
 
+function windDirectionLabel(deg?: number | null) {
+  if (deg == null || isNaN(deg)) return "";
+  const dirs = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  const ix = Math.round(((deg % 360) / 360) * 16) % 16;
+  return `${dirs[ix]} (${Math.round(deg)}°)`;
+}
+
 export default function WeatherWidget() {
   const [data, setData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -58,7 +65,12 @@ export default function WeatherWidget() {
           {data?.temperature != null ? `${data.temperature.toFixed(1)}°C` : loading ? "…" : "-"}
         </div>
         <div style={{ fontSize: 13, color: "#374151" }}>
-          {data?.windspeed != null ? `${data.windspeed} km/h` : ""}
+          {data?.windspeed != null ? (
+            <>
+              <div style={{ fontWeight: 700 }}>{`${data.windspeed.toFixed(1)} km/h`}</div>
+              <div style={{ fontSize: 11, color: "#6b7280" }}>{windDirectionLabel(data.winddirection)}</div>
+            </>
+          ) : null}
         </div>
       </div>
 
